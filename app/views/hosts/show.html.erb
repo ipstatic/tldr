@@ -1,0 +1,46 @@
+<div class="row">
+  <div class="page-header">
+    <h2><%= @host.name %></h2>
+  </div>
+  <nav>
+    <ul class="pager">
+      <li class="previous"><%= link_to '<span aria-hidden="true">&larr;</span> Hosts'.html_safe, hosts_path %></li>
+    </ul>
+  </nav>
+
+  <div class="col-md-4">
+    <dl class="dl-horizontal">
+      <dt>State</dt><dd><%= host_state(@host.state) %></dd>
+      <dt>Address</dt><dd><%= @host.address %></dd>
+      <dt>Alias</dt><dd><%= @host.name_alias %></dd>
+      <dt>Checks Enabled</dt><dd><%= on_off_state(@host.checks_enabled) %></dd>
+      <dt>Check Period</dt><dd><%= @host.check_period %></dd>
+      <dt>Last Check</dt><dd><%= to_time(@host.last_check) %></dd>
+      <dt>Next Check</dt><dd><%= to_time(@host.next_check) %></dd>
+      <dt>Last State Change</dt><dd><%= to_time(@host.last_state_change) %></dd>
+      <dt>Last Time Down</dt><dd><%= to_time(@host.last_time_down) %></dd>
+      <dt>Last Time Unreachable</dt><dd><%= to_time(@host.last_time_unreachable) %></dd>
+      <dt>Check Latency</dt><dd><%= @host.latency %></dd>
+      <dt>Groups</dt><dd><%= content_tag(:ul, @host.groups.map {|g| content_tag(:li, g) }.join().html_safe, class: 'list-inline') %></dd>
+    </dl>
+  </div>
+  <div class="col-md-8">
+    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+      <% @host.services.each_with_index do |service, index| %>
+        <div class="panel panel-default">
+          <div class="panel-heading" role="tab" id="service-<%= index %>-heading">
+            <h4 class="panel-title">
+              <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#service-<%= index %>" aria-expanded="true" aria-controls="service-<%= index %>"><%= service[:name] %></a>
+              <div class="pull-right service-status-right"><%= service_state(service[:state]) %></div>
+            </h4>
+          </div>
+          <div id="service-<%= index %>" class="panel-collapse collapse" role="tabpanel" aria-labelledby="service-<%= index %>-heading">
+            <div class="panel-body">
+              <%= service[:detail] %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
